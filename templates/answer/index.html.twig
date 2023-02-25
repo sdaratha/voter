@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Frage: {{ vote.question }}{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="row">
+        <h3>{{ vote.question }}</h3>
+        <p class="small mb-0">Author: {{ vote.name }} ({{ vote.email }})</p>
+        <p class="small mt-0">erstellt: {{ vote.creationDate|date('d.m.Y H:i:s') }} </p>
+        <div class="col-md-6">
+            {{ form_start(form) }}
+            <table class="table">
+                <tr>
+                    <th>Name</th>
+                    {% for answer in vote.answers %}
+                        <th>{{ answer.answer }}</th>
+                    {% endfor %}
+                    <th>Löschen</th>
+                </tr>
+                {% for voter in vote.voters %}
+                <tr>
+                    <td>{{ voter.name }}</td>
+                    {% for voter_answer in voter.answers %}
+                        <td>
+                            {% if voter_answer.decision == 0 %}
+                                <span style="color: transparent;  text-shadow: 0 0 0 rgb(255, 10, 10); ">&#x2715;</span>
+                            {% elseif voter_answer.decision == 1 %}
+                                <span style="color: transparent;  text-shadow: 0 0 0 rgb(42, 170, 82); ">&#x2714;</span>
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                    <td>
+                        <a href="{{ path('voter_delete', {'voteID': vote.urlKey, 'voterID': voter.id }) }}" class="btn btn-danger btn-sm">Löschen</a>
+                    </td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td>{{ form_row(form.name) }}</td>
+                    {% for answer in form.answers %}
+                        <td>{{ form_row(answer) }}</td>
+                    {% endfor %}
+                    <th></th>
+                </tr>
+            </table>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

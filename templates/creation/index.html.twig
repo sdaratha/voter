@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Frage erstellen{% endblock %}
+
+{% block body %}
+<div class="container">
+<i class="bi-alarm"></i>
+    <h2>Stelle eine Frage</h2>
+    <div class="row">
+        <div class="col-md-6">
+            {{ form_start(form) }}
+                {{ form_row(form.name) }}
+                {{ form_row(form.email) }}
+                {{ form_row(form.question) }}
+
+                <div class="mb-3">
+                    <h3>Antworten</h3>
+
+                    {# the data-index attribute is required for the JavaScript code below #}
+                    <ul class="answers list-unstyled"
+                        data-index="{{ form.answers|length > 0 ? form.answers|last.vars.name + 1 : 0 }}"
+                        data-prototype="{{ form_widget(form.answers.vars.prototype)|e('html_attr') }}"
+                    >
+                        {% for answer in form.answers %}
+                            <li>{{ form_row(answer.answer) }}</li>
+                        {% endfor %}
+                    </ul>
+                    <button type="button" class="add_item_link btn btn-secondary" data-collection-holder-class="answers">Antwort hinzufügen</button>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    const addFormToCollection = (e) => {
+    const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass);
+        const item = document.createElement('li');
+
+        item.innerHTML = collectionHolder
+            .dataset
+            .prototype
+            .replace(
+            /__name__/g,
+            collectionHolder.dataset.index
+            );
+
+        collectionHolder.appendChild(item);
+
+        collectionHolder.dataset.index++;
+    };
+
+    document.querySelectorAll('.add_item_link').forEach(btn => {
+        btn.addEventListener("click", addFormToCollection)
+    });
+</script>
+{% endblock %}
